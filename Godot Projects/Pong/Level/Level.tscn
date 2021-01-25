@@ -1,0 +1,134 @@
+[gd_scene load_steps=13 format=2]
+
+[ext_resource path="res://Player/Player.tscn" type="PackedScene" id=1]
+[ext_resource path="res://Opponent/Opponent.tscn" type="PackedScene" id=2]
+[ext_resource path="res://Ball/Ball.tscn" type="PackedScene" id=3]
+[ext_resource path="res://Level/Level.gd" type="Script" id=4]
+[ext_resource path="res://Assets/PoetsenOne-Regular.ttf" type="DynamicFontData" id=5]
+[ext_resource path="res://Assets/ping_pong_8bit_plop.ogg" type="AudioStream" id=6]
+[ext_resource path="res://Assets/ping_pong_8bit_beeep.ogg" type="AudioStream" id=7]
+
+[sub_resource type="RectangleShape2D" id=1]
+extents = Vector2( 639.694, 10 )
+
+[sub_resource type="RectangleShape2D" id=2]
+extents = Vector2( 93.0971, 359.808 )
+
+[sub_resource type="DynamicFont" id=3]
+size = 50
+outline_color = Color( 0.85098, 0.847059, 0.843137, 1 )
+font_data = ExtResource( 5 )
+
+[sub_resource type="DynamicFont" id=4]
+size = 50
+outline_color = Color( 0.85098, 0.847059, 0.843137, 1 )
+font_data = ExtResource( 5 )
+
+[sub_resource type="DynamicFont" id=5]
+size = 60
+font_data = ExtResource( 5 )
+
+[node name="Level" type="Node"]
+script = ExtResource( 4 )
+
+[node name="BG" type="ColorRect" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color( 0.0784314, 0.129412, 0.14902, 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Walls" type="Node" parent="."]
+
+[node name="Top Wall" type="StaticBody2D" parent="Walls"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Walls/Top Wall"]
+position = Vector2( 640, -10 )
+shape = SubResource( 1 )
+
+[node name="BottomWall" type="StaticBody2D" parent="Walls"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Walls/BottomWall"]
+position = Vector2( 640, 730 )
+shape = SubResource( 1 )
+
+[node name="Kill Planes" type="Node" parent="."]
+
+[node name="Left" type="Area2D" parent="Kill Planes"]
+position = Vector2( -100, 360 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Kill Planes/Left"]
+shape = SubResource( 2 )
+
+[node name="Right" type="Area2D" parent="Kill Planes"]
+position = Vector2( 1380, 360 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Kill Planes/Right"]
+shape = SubResource( 2 )
+
+[node name="Score Board" type="Node" parent="."]
+
+[node name="Player Score" type="Label" parent="Score Board"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = -320.0
+custom_fonts/font = SubResource( 3 )
+custom_colors/font_color = Color( 0.85098, 0.847059, 0.843137, 1 )
+text = "Score"
+align = 1
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Opponent Score" type="Label" parent="Score Board"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 320.0
+custom_fonts/font = SubResource( 4 )
+custom_colors/font_color = Color( 0.85098, 0.847059, 0.843137, 1 )
+text = "Score"
+align = 1
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="CountDown" type="Timer" parent="."]
+wait_time = 2.0
+one_shot = true
+
+[node name="CountDown Label" type="Label" parent="CountDown"]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_top = -180.0
+custom_fonts/font = SubResource( 5 )
+custom_colors/font_color = Color( 0.921569, 0.301961, 0.152941, 1 )
+text = "CountDown"
+align = 1
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="SFX" type="Node" parent="."]
+
+[node name="Score Sound" type="AudioStreamPlayer" parent="SFX"]
+stream = ExtResource( 7 )
+
+[node name="Hit Sound" type="AudioStreamPlayer" parent="SFX"]
+stream = ExtResource( 6 )
+
+[node name="Player" parent="." instance=ExtResource( 1 )]
+position = Vector2( 60, 360 )
+
+[node name="Opponent" parent="." instance=ExtResource( 2 )]
+position = Vector2( 1220, 360 )
+
+[node name="Ball" parent="." instance=ExtResource( 3 )]
+position = Vector2( 640, 360 )
+[connection signal="body_entered" from="Kill Planes/Left" to="." method="_on_Left_body_entered"]
+[connection signal="body_entered" from="Kill Planes/Right" to="." method="_on_Right_body_entered"]
+[connection signal="timeout" from="CountDown" to="." method="_on_CountDown_timeout"]
