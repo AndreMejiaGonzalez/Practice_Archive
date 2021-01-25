@@ -21,6 +21,10 @@ public class PlayerObject : MonoBehaviour
     public CinemachineDollyCart dollyCart;
     public Transform cameraParent;
 
+    public ParticleSystem trail;
+    public ParticleSystem circle;
+    public ParticleSystem barrel;
+
     void Start()
     {
         playerModel = transform.GetChild(0);
@@ -102,6 +106,7 @@ public class PlayerObject : MonoBehaviour
         if(!DOTween.IsTweening(playerModel))
         {
             playerModel.DOLocalRotate(new Vector3(playerModel.localEulerAngles.x, playerModel.localEulerAngles.y, 360 * direction), .4f, RotateMode.LocalAxisAdd).SetEase(Ease.OutSine);
+            barrel.Play();
         }
     }
 
@@ -120,6 +125,8 @@ public class PlayerObject : MonoBehaviour
         if(state)
         {
             cameraParent.GetComponentInChildren<CinemachineImpulseSource>().GenerateImpulse();
+            trail.Play();
+            circle.Play();
         }
 
         float speed = state ? forwardSpeed * 2 : forwardSpeed;
